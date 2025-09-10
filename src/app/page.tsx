@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { Listbox } from "@headlessui/react";
 
 // Function to get initials for the user avatar
-const getInitials = (name: string) => {
+const getInitials = (name?: string) => {
   if (!name) return "";
   const parts = name.split(" ");
   if (parts.length > 1) {
@@ -11,7 +11,6 @@ const getInitials = (name: string) => {
   }
   return parts[0][0];
 };
-
 
 export default function Home() {
   const [comments, setComments] = useState([]);
@@ -40,7 +39,7 @@ export default function Home() {
   }, []);
 
   // Function to find the user for a given comment
-  const findUser = (commentEmail) => {
+  const findUser = (commentEmail?: string) => {
     return users.find((user) => user.email === commentEmail);
   };
 
