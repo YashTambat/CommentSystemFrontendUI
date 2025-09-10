@@ -18,8 +18,8 @@ export default function Home() {
   const [sortOrder, setSortOrder] = useState("desc"); // "desc" = newest, "asc" = oldest
   const [selectedUser, setSelectedUser] = useState(null);
   const [commentText, setCommentText] = useState("");
- 
-    const [showNotification, setShowNotification] = useState(false);
+
+  const [showNotification, setShowNotification] = useState(false);
   useEffect(() => {
     const fetchComments = async () => {
       const response = await fetch("/api/comments");
@@ -48,7 +48,7 @@ export default function Home() {
     sortOrder === "asc" ? a.id - b.id : b.id - a.id
   );
 
-    // Handle posting comment
+  // Handle posting comment
   const handlePostComment = () => {
     if (!selectedUser || !commentText.trim()) return;
 
@@ -109,10 +109,29 @@ export default function Home() {
             </label>
             <Listbox value={selectedUser} onChange={setSelectedUser}>
               <div className="relative mt-1">
-                <Listbox.Button className="relative w-full cursor-default rounded-md border border-gray-300 bg-white py-2 pl-3 pr-10 text-left shadow-sm focus:outline-none sm:text-sm text-black">
-                  {selectedUser
-                    ? `${selectedUser.name} (${selectedUser.company.name})`
-                    : "Choose a user to comment as..."}
+                <Listbox.Button className="relative w-full cursor-default rounded-md border border-blue-500 bg-white py-2 pl-3 pr-10 text-left shadow-sm focus:outline-none sm:text-sm flex items-center">
+                  {selectedUser ? (
+                    <>
+                      {/* Avatar */}
+                      <div className="w-8 h-8 flex-shrink-0 flex items-center justify-center rounded-full font-bold mr-3 bg-[#1d2839] text-white">
+                        {getInitials(selectedUser.name)}
+                      </div>
+
+                      {/* Name + Company */}
+                      <div className="flex flex-col sm:flex-row sm:items-center overflow-hidden">
+                        <span className="font-semibold text-gray-900 truncate">
+                          {selectedUser.name}
+                        </span>
+                        <span className="text-gray-500 ml-2 truncate">
+                          ({selectedUser.company.name})
+                        </span>
+                      </div>
+                    </>
+                  ) : (
+                    <span className="text-gray-400">
+                      Choose a user to comment as...
+                    </span>
+                  )}
                 </Listbox.Button>
 
                 <Listbox.Options className="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm z-10">
@@ -167,15 +186,15 @@ export default function Home() {
 
           {/* Post Button aligned Left */}
           <div className="flex justify-start">
-             <button
-          disabled={!selectedUser || !commentText.trim()}
-          onClick={handlePostComment}
-          className={`flex items-center py-2 px-4 rounded-md font-semibold transition duration-300 ${
-            !selectedUser || !commentText.trim()
-              ? "bg-blue-300 text-white cursor-not-allowed"
-              : "bg-blue-600 text-white hover:bg-blue-700"
-          }`}
-        >
+            <button
+              disabled={!selectedUser || !commentText.trim()}
+              onClick={handlePostComment}
+              className={`flex items-center py-2 px-4 rounded-md font-semibold transition duration-300 ${
+                !selectedUser || !commentText.trim()
+                  ? "bg-blue-300 text-white cursor-not-allowed"
+                  : "bg-blue-600 text-white hover:bg-blue-700"
+              }`}
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="h-5 w-5 mr-2"
@@ -297,13 +316,11 @@ export default function Home() {
         </div>
 
         {showNotification && (
-        <div className="fixed bottom-4 right-4 bg-white text-black px-4 py-3 rounded shadow-lg shadow-gray-300 animate-slide-in">
-
-          <h4 className="font-semibold">Comment Posted</h4>
-          <p className="text-sm">Your comment has been successfully added!</p>
-        </div>
-      )}
-        
+          <div className="fixed bottom-4 right-4 bg-white text-black px-4 py-3 rounded shadow-lg shadow-gray-300 animate-slide-in">
+            <h4 className="font-semibold">Comment Posted</h4>
+            <p className="text-sm">Your comment has been successfully added!</p>
+          </div>
+        )}
       </div>
     </div>
   );
