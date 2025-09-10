@@ -2,21 +2,42 @@
 import { useEffect, useState } from "react";
 import { Listbox } from "@headlessui/react";
 
+
+type Company = {
+  name: string;
+};
+
+type User = {
+  id: number;
+  name: string;
+  email: string;
+  company: Company;
+};
+
+type Comment = {
+  id: number;
+  email: string;
+  body: string;
+  postId?: number;
+  name?: string;
+};
+
+
 // Function to get initials for the user avatar
 const getInitials = (name?: string) => {
   if (!name) return "";
   const parts = name.split(" ");
-  if (parts.length > 1) {
-    return parts[0][0] + parts[1][0];
-  }
-  return parts[0][0];
+  return parts.length > 1 ? parts[0][0] + parts[1][0] : parts[0][0];
 };
 
+
 export default function Home() {
-  const [comments, setComments] = useState([]);
-  const [users, setUsers] = useState([]);
+  const [comments, setComments] = useState<Comment[]>([]);
+const [users, setUsers] = useState<User[]>([]);
+const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  // const [users, setUsers] = useState([]);
   const [sortOrder, setSortOrder] = useState("desc"); // "desc" = newest, "asc" = oldest
-  const [selectedUser, setSelectedUser] = useState(null);
+  // const [selectedUser, setSelectedUser] = useState(null);
   const [commentText, setCommentText] = useState("");
 
   const [showNotification, setShowNotification] = useState(false);
@@ -39,9 +60,10 @@ export default function Home() {
   }, []);
 
   // Function to find the user for a given comment
-  const findUser = (commentEmail?: string) => {
-    return users.find((user) => user.email === commentEmail);
-  };
+const findUser = (commentEmail?: string): User | undefined => {
+  return users.find((user) => user.email === commentEmail);
+};
+
 
   // Sort comments based on sortOrder
   const sortedComments = [...comments].sort((a, b) =>
@@ -49,26 +71,23 @@ export default function Home() {
   );
 
   // Handle posting comment
-  const handlePostComment = () => {
-    if (!selectedUser || !commentText.trim()) return;
+const handlePostComment = () => {
+  if (!selectedUser || !commentText.trim()) return;
 
-    const newComment = {
-      id: comments.length + 1, // temp id
-      email: selectedUser.email,
-      body: commentText,
-    };
-
-    // Add to top of comments
-    setComments([newComment, ...comments]);
-
-    // Reset inputs
-    setSelectedUser(null);
-    setCommentText("");
-
-    // Show notification
-    setShowNotification(true);
-    setTimeout(() => setShowNotification(false), 3000); // hide after 3s
+  const newComment: Comment = {
+    id: comments.length + 1, // temp id
+    email: selectedUser.email,
+    body: commentText,
+    name: selectedUser.name,
   };
+
+  setComments([newComment, ...comments]);
+  setSelectedUser(null);
+  setCommentText("");
+  setShowNotification(true);
+  setTimeout(() => setShowNotification(false), 3000);
+};
+
 
   return (
     <div className="bg-white min-h-screen py-6 px-3 sm:px-6 lg:px-8 flex flex-col items-center">
